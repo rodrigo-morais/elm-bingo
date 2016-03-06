@@ -10349,12 +10349,13 @@ Elm.Bingo.make = function (_elm) {
    var pageHeader = A2($Html.h1,_U.list([]),_U.list([A2(title,"bingo!",3)]));
    var update = F2(function (action,model) {
       var _p0 = action;
-      if (_p0.ctor === "NoOp") {
-            return model;
-         } else {
-            return _U.update(model,{entries: A2($List.sortBy,function (_) {    return _.points;},model.entries)});
-         }
+      switch (_p0.ctor)
+      {case "NoOp": return model;
+         case "Sort": return _U.update(model,{entries: A2($List.sortBy,function (_) {    return _.points;},model.entries)});
+         default: var remainingEntries = A2($List.filter,function (e) {    return !_U.eq(e.id,e.id);},model.entries);
+           return _U.update(model,{entries: remainingEntries});}
    });
+   var Delete = function (a) {    return {ctor: "Delete",_0: a};};
    var Sort = {ctor: "Sort"};
    var view = F2(function (address,model) {
       return A2($Html.div,
@@ -10373,6 +10374,7 @@ Elm.Bingo.make = function (_elm) {
                               ,initialModel: initialModel
                               ,NoOp: NoOp
                               ,Sort: Sort
+                              ,Delete: Delete
                               ,update: update
                               ,title: title
                               ,pageHeader: pageHeader
