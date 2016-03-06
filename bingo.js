@@ -10237,23 +10237,9 @@ Elm.Bingo.make = function (_elm) {
    $String = Elm.String.make(_elm);
    var _op = {};
    var pageFooter = A2($Html.footer,_U.list([]),_U.list([A2($Html.a,_U.list([$Html$Attributes.href("http://google.com")]),_U.list([$Html.text("Google")]))]));
-   var entryItem = F2(function (phrase,points) {
-      return A2($Html.li,
-      _U.list([]),
-      _U.list([A2($Html.span,_U.list([$Html$Attributes.$class("phrase")]),_U.list([$Html.text(phrase)]))
-              ,A2($Html.span,_U.list([$Html$Attributes.$class("points")]),_U.list([$Html.text($Basics.toString(points))]))]));
-   });
-   var entryList = A2($Html.ul,_U.list([]),_U.list([A2(entryItem,"Firts Item",300),A2(entryItem,"Second Item",200)]));
    var title = F2(function (message,times) {    return $Html.text(A2($String.repeat,times,$String.toUpper(A2($Basics._op["++"],message," "))));});
    var pageHeader = A2($Html.h1,_U.list([]),_U.list([A2(title,"bingo!",3)]));
-   var view = A2($Html.div,_U.list([]),_U.list([pageHeader,entryList,pageFooter]));
+   var view = A2($Html.div,_U.list([]),_U.list([pageHeader,pageFooter]));
    var main = view;
-   return _elm.Bingo.values = {_op: _op
-                              ,title: title
-                              ,pageHeader: pageHeader
-                              ,entryItem: entryItem
-                              ,entryList: entryList
-                              ,pageFooter: pageFooter
-                              ,view: view
-                              ,main: main};
+   return _elm.Bingo.values = {_op: _op,title: title,pageHeader: pageHeader,pageFooter: pageFooter,view: view,main: main};
 };

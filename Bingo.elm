@@ -15,6 +15,22 @@ pageHeader =
  h1 [ ] [ title "bingo!" 3 ]
 
 
+entryItem phrase points =
+ li [ ]
+    [ span [ class "phrase" ]
+           [ text phrase ], 
+      span [ class "points" ]
+           [ text (toString points) ]
+    ]
+
+
+entryList =
+ ul [ ]
+    [ entryItem "Firts Item" 300,
+      entryItem "Second Item" 200
+    ]
+
+
 pageFooter =
  footer [ ]
         [ a [ href "http://google.com" ]
@@ -23,6 +39,11 @@ pageFooter =
 
 
 view =
- div [ ] [ pageHeader, pageFooter ]
+ div [ ]
+     [
+      pageHeader,
+      entryList,
+      pageFooter
+     ]
 
 main = view
