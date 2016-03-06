@@ -10345,13 +10345,16 @@ Elm.Bingo.make = function (_elm) {
       switch (_p0.ctor)
       {case "NoOp": return model;
          case "Sort": return _U.update(model,{entries: A2($List.sortBy,function (_) {    return _.points;},model.entries)});
-         default: var remainingEntries = A2($List.filter,function (e) {    return !_U.eq(e.id,_p0._0);},model.entries);
-           return _U.update(model,{entries: remainingEntries});}
+         case "Delete": var remainingEntries = A2($List.filter,function (e) {    return !_U.eq(e.id,_p0._0);},model.entries);
+           return _U.update(model,{entries: remainingEntries});
+         default: var updateEntry = function (e) {    return _U.eq(e.id,_p0._0) ? _U.update(e,{wasSpoken: $Basics.not(e.wasSpoken)}) : e;};
+           return _U.update(model,{entries: A2($List.map,updateEntry,model.entries)});}
    });
+   var Mark = function (a) {    return {ctor: "Mark",_0: a};};
    var Delete = function (a) {    return {ctor: "Delete",_0: a};};
    var entryItem = F2(function (address,entry) {
       return A2($Html.li,
-      _U.list([]),
+      _U.list([$Html$Attributes.classList(_U.list([{ctor: "_Tuple2",_0: "highlight",_1: entry.wasSpoken}])),A2($Html$Events.onClick,address,Mark(entry.id))]),
       _U.list([A2($Html.span,_U.list([$Html$Attributes.$class("phrase")]),_U.list([$Html.text(entry.phrase)]))
               ,A2($Html.span,_U.list([$Html$Attributes.$class("points")]),_U.list([$Html.text($Basics.toString(entry.points))]))
               ,A2($Html.button,
@@ -10369,7 +10372,7 @@ Elm.Bingo.make = function (_elm) {
               ,pageFooter]));
    });
    var NoOp = {ctor: "NoOp"};
-   var newEntry = F3(function (phrase,points,id) {    return {phrase: phrase,points: points,wasSpoke: false,id: id};});
+   var newEntry = F3(function (phrase,points,id) {    return {phrase: phrase,points: points,wasSpoken: false,id: id};});
    var initialModel = {entries: _U.list([A3(newEntry,"Third Item",300,3),A3(newEntry,"Firts Item",100,1),A3(newEntry,"Second Item",200,2)])};
    var main = $StartApp$Simple.start({model: initialModel,view: view,update: update});
    return _elm.Bingo.values = {_op: _op
@@ -10378,6 +10381,7 @@ Elm.Bingo.make = function (_elm) {
                               ,NoOp: NoOp
                               ,Sort: Sort
                               ,Delete: Delete
+                              ,Mark: Mark
                               ,update: update
                               ,title: title
                               ,pageHeader: pageHeader
