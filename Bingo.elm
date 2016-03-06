@@ -4,6 +4,16 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import String exposing (toUpper, repeat)
 
+
+newEntry phrase points id =
+ {
+  phrase = phrase,
+  points = points,
+  wasSpoke = False,
+  id = id
+ }
+
+
 title message times =
  message ++ " "
  |> toUpper
@@ -15,19 +25,19 @@ pageHeader =
  h1 [ ] [ title "bingo!" 3 ]
 
 
-entryItem phrase points =
+entryItem entry =
  li [ ]
     [ span [ class "phrase" ]
-           [ text phrase ], 
+           [ text entry.phrase ], 
       span [ class "points" ]
-           [ text (toString points) ]
+           [ text (toString entry.points) ]
     ]
 
 
 entryList =
  ul [ ]
-    [ entryItem "Firts Item" 300,
-      entryItem "Second Item" 200
+    [ entryItem (newEntry "Firts Item" 300 1),
+      entryItem (newEntry "Second Item" 200 2)
     ]
 
 
