@@ -10389,7 +10389,11 @@ Elm.Bingo.make = function (_elm) {
    var newEntry = F3(function (phrase,points,id) {    return {phrase: phrase,points: points,wasSpoken: false,id: id};});
    var initialModel = {entries: _U.list([A3(newEntry,"Third Item",300,3),A3(newEntry,"Firts Item",100,1),A3(newEntry,"Second Item",200,2)])};
    var main = $StartApp$Simple.start({model: initialModel,view: view,update: update});
+   var Model = function (a) {    return {entries: a};};
+   var Entry = F4(function (a,b,c,d) {    return {phrase: a,points: b,wasSpoken: c,id: d};});
    return _elm.Bingo.values = {_op: _op
+                              ,Entry: Entry
+                              ,Model: Model
                               ,newEntry: newEntry
                               ,initialModel: initialModel
                               ,NoOp: NoOp

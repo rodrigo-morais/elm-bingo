@@ -4,12 +4,28 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 
+import Signal exposing (Address)
+
 import String exposing (toUpper, repeat)
 
 import StartApp.Simple as StartApp
 
 -- MODEL
 
+type alias Entry =
+ {
+  phrase: String,
+  points: Int,
+  wasSpoken: Bool,
+  id: Int
+ }
+
+type alias Model =
+ {
+  entries: List Entry
+ }
+
+newEntry : String -> Int -> Int -> Entry 
 newEntry phrase points id =
  {
   phrase = phrase,
@@ -19,6 +35,7 @@ newEntry phrase points id =
  }
 
 
+initialModel : Model
 initialModel =
  {
   entries = [
@@ -37,6 +54,7 @@ type Action =
  | Delete Int
  | Mark Int
 
+update : Action -> Model -> Model
 update action model =
  case action of
   NoOp ->
@@ -62,7 +80,7 @@ update action model =
 
 -- VIEW
 
-
+title : String -> Int -> Html
 title message times =
  message ++ " "
  |> toUpper
@@ -70,10 +88,12 @@ title message times =
  |> text
 
 
+pageHeader : Html
 pageHeader =
  h1 [ ] [ title "bingo!" 3 ]
 
 
+totalPoints : List Entry -> Int
 totalPoints entries =
  let
   spokenEntries = List.filter .wasSpoken entries
@@ -81,6 +101,7 @@ totalPoints entries =
   List.sum (List.map .points spokenEntries)
 
 
+totalItem : Int -> Html
 totalItem total =
  li
   [ class "total" ]
@@ -89,6 +110,7 @@ totalItem total =
   ]
 
 
+entryItem : Address Action -> Entry -> Html
 entryItem address entry =
  li
   [ classList [ ("highlight", entry.wasSpoken)],
@@ -103,6 +125,7 @@ entryItem address entry =
   ]
 
 
+entryList : Address Action -> List Entry -> Html
 entryList address entries =
  let
   entryItems = List.map (entryItem address) entries
@@ -111,6 +134,7 @@ entryList address entries =
   ul [ ] items
 
 
+pageFooter : Html
 pageFooter =
  footer [ ]
         [ a [ href "http://google.com" ]
@@ -118,6 +142,8 @@ pageFooter =
         ]
 
 
+
+view : Address Action -> Model -> Html
 view address model =
  div [ ]
      [
@@ -129,6 +155,7 @@ view address model =
 
 -- PUT ALL TOGETHER
 
+main : Signal Html
 main =
  StartApp.start
  {
