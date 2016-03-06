@@ -47,7 +47,7 @@ update action model =
   Delete id ->
    let
     remainingEntries =
-     List.filter (\e -> e.id /= e.id) model.entries
+     List.filter (\e -> e.id /= id) model.entries
    in
     { model | entries = remainingEntries }
 
@@ -65,17 +65,22 @@ pageHeader =
  h1 [ ] [ title "bingo!" 3 ]
 
 
-entryItem entry =
+entryItem address entry =
  li [ ]
     [ span [ class "phrase" ]
            [ text entry.phrase ], 
       span [ class "points" ]
-           [ text (toString entry.points) ]
+           [ text (toString entry.points) ],
+      button [ class "delete", onClick address (Delete entry.id) ]
+             [ text "Delete" ]
     ]
 
 
-entryList entries =
- ul [ ] (List.map entryItem entries)
+entryList address entries =
+ let
+  entryItems = List.map (entryItem address) entries
+ in
+  ul [ ] entryItems
 
 
 pageFooter =
@@ -89,7 +94,7 @@ view address model =
  div [ ]
      [
       pageHeader,
-      entryList model.entries,
+      entryList address model.entries,
       button [ class "sort", onClick address Sort ] [ text "Sort" ],
       pageFooter
      ]

@@ -10338,13 +10338,6 @@ Elm.Bingo.make = function (_elm) {
    $String = Elm.String.make(_elm);
    var _op = {};
    var pageFooter = A2($Html.footer,_U.list([]),_U.list([A2($Html.a,_U.list([$Html$Attributes.href("http://google.com")]),_U.list([$Html.text("Google")]))]));
-   var entryItem = function (entry) {
-      return A2($Html.li,
-      _U.list([]),
-      _U.list([A2($Html.span,_U.list([$Html$Attributes.$class("phrase")]),_U.list([$Html.text(entry.phrase)]))
-              ,A2($Html.span,_U.list([$Html$Attributes.$class("points")]),_U.list([$Html.text($Basics.toString(entry.points))]))]));
-   };
-   var entryList = function (entries) {    return A2($Html.ul,_U.list([]),A2($List.map,entryItem,entries));};
    var title = F2(function (message,times) {    return $Html.text(A2($String.repeat,times,$String.toUpper(A2($Basics._op["++"],message," "))));});
    var pageHeader = A2($Html.h1,_U.list([]),_U.list([A2(title,"bingo!",3)]));
    var update = F2(function (action,model) {
@@ -10352,16 +10345,26 @@ Elm.Bingo.make = function (_elm) {
       switch (_p0.ctor)
       {case "NoOp": return model;
          case "Sort": return _U.update(model,{entries: A2($List.sortBy,function (_) {    return _.points;},model.entries)});
-         default: var remainingEntries = A2($List.filter,function (e) {    return !_U.eq(e.id,e.id);},model.entries);
+         default: var remainingEntries = A2($List.filter,function (e) {    return !_U.eq(e.id,_p0._0);},model.entries);
            return _U.update(model,{entries: remainingEntries});}
    });
    var Delete = function (a) {    return {ctor: "Delete",_0: a};};
+   var entryItem = F2(function (address,entry) {
+      return A2($Html.li,
+      _U.list([]),
+      _U.list([A2($Html.span,_U.list([$Html$Attributes.$class("phrase")]),_U.list([$Html.text(entry.phrase)]))
+              ,A2($Html.span,_U.list([$Html$Attributes.$class("points")]),_U.list([$Html.text($Basics.toString(entry.points))]))
+              ,A2($Html.button,
+              _U.list([$Html$Attributes.$class("delete"),A2($Html$Events.onClick,address,Delete(entry.id))]),
+              _U.list([$Html.text("Delete")]))]));
+   });
+   var entryList = F2(function (address,entries) {    var entryItems = A2($List.map,entryItem(address),entries);return A2($Html.ul,_U.list([]),entryItems);});
    var Sort = {ctor: "Sort"};
    var view = F2(function (address,model) {
       return A2($Html.div,
       _U.list([]),
       _U.list([pageHeader
-              ,entryList(model.entries)
+              ,A2(entryList,address,model.entries)
               ,A2($Html.button,_U.list([$Html$Attributes.$class("sort"),A2($Html$Events.onClick,address,Sort)]),_U.list([$Html.text("Sort")]))
               ,pageFooter]));
    });
