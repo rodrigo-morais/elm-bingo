@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import String exposing (toUpper, repeat)
 
+-- MODEL
 
 newEntry phrase points id =
  {
@@ -12,6 +13,18 @@ newEntry phrase points id =
   wasSpoke = False,
   id = id
  }
+
+
+initialModel =
+ {
+  entries = [
+   newEntry "Third Item" 300 3,
+   newEntry "Firts Item" 100 1,
+   newEntry "Second Item" 200 2
+  ]
+ }
+
+-- VIEW
 
 
 title message times =
@@ -34,11 +47,8 @@ entryItem entry =
     ]
 
 
-entryList =
- ul [ ]
-    [ entryItem (newEntry "Firts Item" 300 1),
-      entryItem (newEntry "Second Item" 200 2)
-    ]
+entryList entries =
+ ul [ ] (List.map entryItem entries)
 
 
 pageFooter =
@@ -48,12 +58,14 @@ pageFooter =
         ]
 
 
-view =
+view model =
  div [ ]
      [
       pageHeader,
-      entryList,
+      entryList model.entries,
       pageFooter
      ]
 
-main = view
+-- PUT ALL TOGETHER
+
+main = view initialModel

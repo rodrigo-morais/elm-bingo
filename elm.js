@@ -10243,14 +10243,16 @@ Elm.Bingo.make = function (_elm) {
       _U.list([A2($Html.span,_U.list([$Html$Attributes.$class("phrase")]),_U.list([$Html.text(entry.phrase)]))
               ,A2($Html.span,_U.list([$Html$Attributes.$class("points")]),_U.list([$Html.text($Basics.toString(entry.points))]))]));
    };
+   var entryList = function (entries) {    return A2($Html.ul,_U.list([]),A2($List.map,entryItem,entries));};
    var title = F2(function (message,times) {    return $Html.text(A2($String.repeat,times,$String.toUpper(A2($Basics._op["++"],message," "))));});
    var pageHeader = A2($Html.h1,_U.list([]),_U.list([A2(title,"bingo!",3)]));
+   var view = function (model) {    return A2($Html.div,_U.list([]),_U.list([pageHeader,entryList(model.entries),pageFooter]));};
    var newEntry = F3(function (phrase,points,id) {    return {phrase: phrase,points: points,wasSpoke: false,id: id};});
-   var entryList = A2($Html.ul,_U.list([]),_U.list([entryItem(A3(newEntry,"Firts Item",300,1)),entryItem(A3(newEntry,"Second Item",200,2))]));
-   var view = A2($Html.div,_U.list([]),_U.list([pageHeader,entryList,pageFooter]));
-   var main = view;
+   var initialModel = {entries: _U.list([A3(newEntry,"Third Item",300,3),A3(newEntry,"Firts Item",100,1),A3(newEntry,"Second Item",200,2)])};
+   var main = view(initialModel);
    return _elm.Bingo.values = {_op: _op
                               ,newEntry: newEntry
+                              ,initialModel: initialModel
                               ,title: title
                               ,pageHeader: pageHeader
                               ,entryItem: entryItem
