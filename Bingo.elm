@@ -2,7 +2,11 @@ module Bingo where
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (onClick)
+
 import String exposing (toUpper, repeat)
+
+import StartApp.Simple as StartApp
 
 -- MODEL
 
@@ -73,17 +77,21 @@ pageFooter =
         ]
 
 
-view model =
+view address model =
  div [ ]
      [
       pageHeader,
       entryList model.entries,
+      button [ class "sort", onClick address Sort ] [ text "Sort" ],
       pageFooter
      ]
 
 -- PUT ALL TOGETHER
 
 main =
- initialModel
- |> update Sort
- |> view
+ StartApp.start
+ {
+  model = initialModel,
+  view = view,
+  update = update
+ }
