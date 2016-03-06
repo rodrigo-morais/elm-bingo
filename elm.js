@@ -10247,12 +10247,25 @@ Elm.Bingo.make = function (_elm) {
    var title = F2(function (message,times) {    return $Html.text(A2($String.repeat,times,$String.toUpper(A2($Basics._op["++"],message," "))));});
    var pageHeader = A2($Html.h1,_U.list([]),_U.list([A2(title,"bingo!",3)]));
    var view = function (model) {    return A2($Html.div,_U.list([]),_U.list([pageHeader,entryList(model.entries),pageFooter]));};
+   var update = F2(function (action,model) {
+      var _p0 = action;
+      if (_p0.ctor === "NoOp") {
+            return model;
+         } else {
+            return _U.update(model,{entries: A2($List.sortBy,function (_) {    return _.points;},model.entries)});
+         }
+   });
+   var Sort = {ctor: "Sort"};
+   var NoOp = {ctor: "NoOp"};
    var newEntry = F3(function (phrase,points,id) {    return {phrase: phrase,points: points,wasSpoke: false,id: id};});
    var initialModel = {entries: _U.list([A3(newEntry,"Third Item",300,3),A3(newEntry,"Firts Item",100,1),A3(newEntry,"Second Item",200,2)])};
-   var main = view(initialModel);
+   var main = view(A2(update,Sort,initialModel));
    return _elm.Bingo.values = {_op: _op
                               ,newEntry: newEntry
                               ,initialModel: initialModel
+                              ,NoOp: NoOp
+                              ,Sort: Sort
+                              ,update: update
                               ,title: title
                               ,pageHeader: pageHeader
                               ,entryItem: entryItem
