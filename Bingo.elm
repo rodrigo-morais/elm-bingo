@@ -2,7 +2,7 @@ module Bingo where
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, on, targetValue)
 
 import Signal exposing (Address)
 
@@ -22,7 +22,10 @@ type alias Entry =
 
 type alias Model =
  {
-  entries: List Entry
+  entries: List Entry,
+  phraseInput : String,
+  pointsInput : String,
+  nextID : Int
  }
 
 newEntry : String -> Int -> Int -> Entry 
@@ -42,7 +45,10 @@ initialModel =
    newEntry "Third Item" 300 3,
    newEntry "Firts Item" 100 1,
    newEntry "Second Item" 200 2
-  ]
+  ],
+  phraseInput = "",
+  pointsInput = "",
+  nextID = 4
  }
 
 
@@ -53,6 +59,8 @@ type Action =
  | Sort
  | Delete Int
  | Mark Int
+ | UpdatePhraseInput String
+ | UpdatePointsInput String
 
 update : Action -> Model -> Model
 update action model =
@@ -76,6 +84,12 @@ update action model =
      if e.id == id then { e | wasSpoken = (not e.wasSpoken) } else e
    in
     {model | entries = List.map updateEntry model.entries }
+
+  UpdatePhraseInput content ->
+   { model | phraseInput = content }
+
+  UpdatePointsInput content ->
+   { model | pointsInput = content }
 
 
 -- VIEW
@@ -134,6 +148,31 @@ entryList address entries =
   ul [ ] items
 
 
+entryForm : Address Action -> Model -> Html
+entryForm address model =
+ div [ ]
+     [ input [ type' "text",
+               placeholder "Phrase",
+               value model.phraseInput,
+               name "phrase",
+               autofocus True,
+               on "input" targetValue (Signal.message address << UpdatePhraseInput)
+             ]
+             [ ],
+        input [ type' "text",
+               placeholder "Pointd",
+               value model.pointsInput,
+               name "points",
+               on "input" targetValue (Signal.message address << UpdatePointsInput)
+             ]
+             [ ],
+        button [ class "add" ]
+               [ text "Add" ],
+        h2 [ ]
+           [ text (model.phraseInput ++ " " ++ model.pointsInput )]
+     ]
+
+
 pageFooter : Html
 pageFooter =
  footer [ ]
@@ -148,6 +187,7 @@ view address model =
  div [ ]
      [
       pageHeader,
+      entryForm address model,
       entryList address model.entries,
       button [ class "sort", onClick address Sort ] [ text "Sort" ],
       pageFooter
