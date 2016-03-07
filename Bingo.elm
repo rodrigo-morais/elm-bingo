@@ -153,7 +153,7 @@ entryItem address entry =
     span [ class "points" ]
          [ text (toString entry.points) ],
     button [ class "delete", onClick address (Delete entry.id) ]
-           [ text "Delete" ]
+           [ ]
   ]
 
 
