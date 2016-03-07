@@ -10350,18 +10350,7 @@ Elm.Bingo.make = function (_elm) {
    };
    var title = F2(function (message,times) {    return $Html.text(A2($String.repeat,times,$String.toUpper(A2($Basics._op["++"],message," "))));});
    var pageHeader = A2($Html.h1,_U.list([]),_U.list([A2(title,"bingo!",3)]));
-   var update = F2(function (action,model) {
-      var _p0 = action;
-      switch (_p0.ctor)
-      {case "NoOp": return model;
-         case "Sort": return _U.update(model,{entries: A2($List.sortBy,function (_) {    return _.points;},model.entries)});
-         case "Delete": var remainingEntries = A2($List.filter,function (e) {    return !_U.eq(e.id,_p0._0);},model.entries);
-           return _U.update(model,{entries: remainingEntries});
-         case "Mark": var updateEntry = function (e) {    return _U.eq(e.id,_p0._0) ? _U.update(e,{wasSpoken: $Basics.not(e.wasSpoken)}) : e;};
-           return _U.update(model,{entries: A2($List.map,updateEntry,model.entries)});
-         case "UpdatePhraseInput": return _U.update(model,{phraseInput: _p0._0});
-         default: return _U.update(model,{pointsInput: _p0._0});}
-   });
+   var Add = {ctor: "Add"};
    var UpdatePointsInput = function (a) {    return {ctor: "UpdatePointsInput",_0: a};};
    var UpdatePhraseInput = function (a) {    return {ctor: "UpdatePhraseInput",_0: a};};
    var entryForm = F2(function (address,model) {
@@ -10373,16 +10362,16 @@ Elm.Bingo.make = function (_elm) {
                       ,$Html$Attributes.value(model.phraseInput)
                       ,$Html$Attributes.name("phrase")
                       ,$Html$Attributes.autofocus(true)
-                      ,A3($Html$Events.on,"input",$Html$Events.targetValue,function (_p1) {    return A2($Signal.message,address,UpdatePhraseInput(_p1));})]),
+                      ,A3($Html$Events.on,"input",$Html$Events.targetValue,function (_p0) {    return A2($Signal.message,address,UpdatePhraseInput(_p0));})]),
               _U.list([]))
               ,A2($Html.input,
               _U.list([$Html$Attributes.type$("text")
                       ,$Html$Attributes.placeholder("Pointd")
                       ,$Html$Attributes.value(model.pointsInput)
                       ,$Html$Attributes.name("points")
-                      ,A3($Html$Events.on,"input",$Html$Events.targetValue,function (_p2) {    return A2($Signal.message,address,UpdatePointsInput(_p2));})]),
+                      ,A3($Html$Events.on,"input",$Html$Events.targetValue,function (_p1) {    return A2($Signal.message,address,UpdatePointsInput(_p1));})]),
               _U.list([]))
-              ,A2($Html.button,_U.list([$Html$Attributes.$class("add")]),_U.list([$Html.text("Add")]))
+              ,A2($Html.button,_U.list([$Html$Attributes.$class("add"),A2($Html$Events.onClick,address,Add)]),_U.list([$Html.text("Add")]))
               ,A2($Html.h2,_U.list([]),_U.list([$Html.text(A2($Basics._op["++"],model.phraseInput,A2($Basics._op["++"]," ",model.pointsInput)))]))]));
    });
    var Mark = function (a) {    return {ctor: "Mark",_0: a};};
@@ -10412,11 +10401,25 @@ Elm.Bingo.make = function (_elm) {
               ,pageFooter]));
    });
    var NoOp = {ctor: "NoOp"};
+   var initialModel = {entries: _U.list([]),phraseInput: "",pointsInput: "",nextID: 4};
    var newEntry = F3(function (phrase,points,id) {    return {phrase: phrase,points: points,wasSpoken: false,id: id};});
-   var initialModel = {entries: _U.list([A3(newEntry,"Third Item",300,3),A3(newEntry,"Firts Item",100,1),A3(newEntry,"Second Item",200,2)])
-                      ,phraseInput: ""
-                      ,pointsInput: ""
-                      ,nextID: 4};
+   var update = F2(function (action,model) {
+      var _p2 = action;
+      switch (_p2.ctor)
+      {case "NoOp": return model;
+         case "Sort": return _U.update(model,{entries: A2($List.sortBy,function (_) {    return _.points;},model.entries)});
+         case "Delete": var remainingEntries = A2($List.filter,function (e) {    return !_U.eq(e.id,_p2._0);},model.entries);
+           return _U.update(model,{entries: remainingEntries});
+         case "Mark": var updateEntry = function (e) {    return _U.eq(e.id,_p2._0) ? _U.update(e,{wasSpoken: $Basics.not(e.wasSpoken)}) : e;};
+           return _U.update(model,{entries: A2($List.map,updateEntry,model.entries)});
+         case "UpdatePhraseInput": return _U.update(model,{phraseInput: _p2._0});
+         case "UpdatePointsInput": return _U.update(model,{pointsInput: _p2._0});
+         default: var isInvalid = function (model) {    return $String.isEmpty(model.phraseInput) || $String.isEmpty(model.pointsInput);};
+           var getPoints = A2($Maybe.withDefault,0,$Result.toMaybe($String.toInt(model.pointsInput)));
+           var entryAdd = A3(newEntry,model.phraseInput,getPoints,model.nextID);
+           return isInvalid(model) ? model : _U.update(model,
+           {phraseInput: "",pointsInput: "",entries: A2($List._op["::"],entryAdd,model.entries),nextID: model.nextID + 1});}
+   });
    var main = $StartApp$Simple.start({model: initialModel,view: view,update: update});
    var Model = F4(function (a,b,c,d) {    return {entries: a,phraseInput: b,pointsInput: c,nextID: d};});
    var Entry = F4(function (a,b,c,d) {    return {phrase: a,points: b,wasSpoken: c,id: d};});
@@ -10431,6 +10434,7 @@ Elm.Bingo.make = function (_elm) {
                               ,Mark: Mark
                               ,UpdatePhraseInput: UpdatePhraseInput
                               ,UpdatePointsInput: UpdatePointsInput
+                              ,Add: Add
                               ,update: update
                               ,title: title
                               ,pageHeader: pageHeader

@@ -41,11 +41,7 @@ newEntry phrase points id =
 initialModel : Model
 initialModel =
  {
-  entries = [
-   newEntry "Third Item" 300 3,
-   newEntry "Firts Item" 100 1,
-   newEntry "Second Item" 200 2
-  ],
+  entries = [ ],
   phraseInput = "",
   pointsInput = "",
   nextID = 4
@@ -61,6 +57,7 @@ type Action =
  | Mark Int
  | UpdatePhraseInput String
  | UpdatePointsInput String
+ | Add
 
 update : Action -> Model -> Model
 update action model =
@@ -90,6 +87,27 @@ update action model =
 
   UpdatePointsInput content ->
    { model | pointsInput = content }
+
+  Add ->
+   let
+    getPoints =
+     String.toInt model.pointsInput |> Result.toMaybe |> Maybe.withDefault 0
+    entryAdd =
+     newEntry model.phraseInput getPoints model.nextID
+    isInvalid model =
+     String.isEmpty model.phraseInput ||
+     String.isEmpty model.pointsInput
+   in
+    if isInvalid model then
+     model
+    else
+     {
+      model |
+       phraseInput = "",
+       pointsInput = "",
+       entries = entryAdd :: model.entries,
+       nextID = model.nextID + 1
+     }
 
 
 -- VIEW
@@ -166,7 +184,7 @@ entryForm address model =
                on "input" targetValue (Signal.message address << UpdatePointsInput)
              ]
              [ ],
-        button [ class "add" ]
+        button [ class "add", onClick address Add ]
                [ text "Add" ],
         h2 [ ]
            [ text (model.phraseInput ++ " " ++ model.pointsInput )]
